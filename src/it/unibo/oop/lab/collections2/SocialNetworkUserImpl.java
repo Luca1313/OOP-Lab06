@@ -1,7 +1,9 @@
 package it.unibo.oop.lab.collections2;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -30,6 +32,8 @@ public class SocialNetworkUserImpl<U extends User> extends UserImpl implements S
      * think of what type of keys and values would best suit the requirements
      */
 
+	final private Map<String, Integer> group;
+	final private User me;
     /*
      * [CONSTRUCTORS]
      * 
@@ -40,6 +44,8 @@ public class SocialNetworkUserImpl<U extends User> extends UserImpl implements S
      * 
      * 2) Define a further constructor where age is defaulted to -1
      */
+	
+	public SocialNetworkUserImpl(String firstnName)
 
     /**
      * Builds a new {@link SocialNetworkUserImpl}.
