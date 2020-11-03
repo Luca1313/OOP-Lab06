@@ -25,7 +25,7 @@ public final class UseCollection {
          * from 1000 (included) to 2000 (excluded).
          */
         
-    	final ArrayList<Integer> al = new ArrayList<>();
+    	final List<Integer> al = new ArrayList<>();
     	//((ArrayList<Integer>)al).ensureCapacity(999);
     	
     	for(int i = 1000; i < 2000; i++) {
@@ -39,7 +39,7 @@ public final class UseCollection {
          * the same contents of the list of point 1.
          */
     	
-    	final LinkedList<Integer> ll = new LinkedList<>(al);
+    	final List<Integer> ll = new LinkedList<>(al);
     	System.out.println(ll);
         /*
          * 3) Using "set" and "get" and "size" methods, swap the first and last
@@ -47,8 +47,8 @@ public final class UseCollection {
          * (Suggestion: use a temporary variable)
          */
     	
-    	int temp = al.get(999);
-    	al.set(999, al.get(0));
+    	int temp = al.get(al.size() - 1);
+    	al.set(al.size() - 1, al.get(0));
     	al.set(0, temp);
     	System.out.println(al);
         /*
@@ -79,7 +79,7 @@ public final class UseCollection {
     		ll.add(0, i);
     	}
     	timeAddLinkedList = System.nanoTime() - timeAddLinkedList;
-    	System.out.println("Tempo di aggiunta array: " + timeAddLinkedList);
+    	System.out.println("Tempo di aggiunta list: " + timeAddLinkedList);
         /*
          * 6) Measure the performance of reading 1000 times an element whose
          * position is in the middle of the collection for both ArrayList and
