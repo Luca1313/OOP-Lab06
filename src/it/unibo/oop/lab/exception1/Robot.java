@@ -33,8 +33,9 @@ public class Robot {
      * Moves the robot up by one unit.
      * 
      * @return If the Up movement has been performed
+     * @throws Exception 
      */
-    public boolean moveUp() {
+    public boolean moveUp() throws Exception {
         return moveToPosition(environment.getCurrPosX(), this.environment.getCurrPosY() + Robot.MOVEMENT_DELTA);
     }
 
@@ -42,8 +43,9 @@ public class Robot {
      * Moves the robot down by one unit.
      * 
      * @return If the Down movement has been performed
+     * @throws Exception 
      */
-    public boolean moveDown() {
+    public boolean moveDown() throws Exception {
         return this.moveToPosition(this.environment.getCurrPosX(), environment.getCurrPosY() - Robot.MOVEMENT_DELTA);
     }
 
@@ -51,8 +53,9 @@ public class Robot {
      * Moves the robot left by one unit.
      * 
      * @return A boolean indicating if the Left movement has been performed
+     * @throws Exception 
      */
-    public boolean moveLeft() {
+    public boolean moveLeft() throws Exception {
         return this.moveToPosition(this.environment.getCurrPosX() - Robot.MOVEMENT_DELTA,
                 this.environment.getCurrPosY());
     }
@@ -61,8 +64,9 @@ public class Robot {
      * Moves the robot right by one unit.
      * 
      * @return A boolean indicating if the Right movement has been performed
+     * @throws Exception 
      */
-    public boolean moveRight() {
+    public boolean moveRight() throws Exception {
         return this.moveToPosition(this.environment.getCurrPosX() + Robot.MOVEMENT_DELTA,
                 this.environment.getCurrPosY());
     }
@@ -82,21 +86,25 @@ public class Robot {
      * @param newY
      *            the new Y position to move the robot to
      * @return true if robot gets moved, false otherwise
+     * @throws Exception 
      */
-    private boolean moveToPosition(final int newX, final int newY) {
+    private boolean moveToPosition(final int newX, final int newY) throws Exception {
         boolean returnValue = true;
         if (this.isBatteryEnoughToMove()) {
-            if (this.environment.move(newX, newY)) {
-                this.consumeBatteryForMovement();
-                this.log("Moved to position(" + newX + "," + newY + ").");
-            } else {
+        	try{
+        		this.environment.move(newX, newY);
+        		this.consumeBatteryForMovement();
+        		this.log("Moved to position(" + newX + "," + newY + ").");
+            } catch(Exception e) {
+            	throw e;
+            	/*
                 this.log("Can not move to (" + newX + "," + newY
-                        + ") the robot is touching at least one world boundary");
-                returnValue = false;
+                        + ") the robot is touching at least one world boundary, exception: " + e);
+                returnValue = false; */
             }
         } else {
-            this.log("Can not move to position(" + newX + "," + newY + "). Not enough battery.");
-            returnValue = false;
+            Exception exceptionBattery = new NotEnoughBatteryException();
+            throw exceptionBattery;
         }
         return returnValue;
     }

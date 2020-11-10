@@ -34,12 +34,17 @@ public class StrictBankAccount implements BankAccount {
     /**
      * 
      * {@inheritDoc}
+     * @throws Exception 
      */
     public void deposit(final int usrID, final double amount) {
-        if (checkUser(usrID)) {
-            this.balance += amount;
-            incTransactions();
-        }
+    	try {
+    		if (checkUser(usrID)) {
+    			this.balance += amount;
+    			incTransactions();
+    		}
+    	} catch (Exception e) {
+    		System.out.println("Eccezione: " + e);
+    	}
     }
 
     /**
@@ -47,10 +52,14 @@ public class StrictBankAccount implements BankAccount {
      * {@inheritDoc}
      */
     public void withdraw(final int usrID, final double amount) {
-        if (checkUser(usrID) && isWithdrawAllowed(amount)) {
-            this.balance -= amount;
-            incTransactions();
-        }
+    	try {
+    		if (checkUser(usrID) && isWithdrawAllowed(amount)) {
+    			this.balance -= amount;
+    			incTransactions();
+    		}
+    	} catch (Exception e) {
+    		System.out.println("Eccezione: " + e);
+    	}
     }
 
     /**
@@ -58,10 +67,14 @@ public class StrictBankAccount implements BankAccount {
      * {@inheritDoc}
      */
     public void depositFromATM(final int usrID, final double amount) {
-        if (nTransactions < nMaxATMTransactions) {
-            this.deposit(usrID, amount - StrictBankAccount.ATM_TRANSACTION_FEE);
-            nTransactions++;
-        }
+        try{
+        	if (isATMOperationAllowed()) {
+        		this.deposit(usrID, amount - StrictBankAccount.ATM_TRANSACTION_FEE);
+        		nTransactions++;
+        	}
+        } catch (Exception e) {
+    		System.out.println("Eccezione: " + e);
+    	}
     }
 
     /**
@@ -69,9 +82,13 @@ public class StrictBankAccount implements BankAccount {
      * {@inheritDoc}
      */
     public void withdrawFromATM(final int usrID, final double amount) {
-        if (nTransactions < nMaxATMTransactions) {
-            this.withdraw(usrID, amount + StrictBankAccount.ATM_TRANSACTION_FEE);
-        }
+    	try {
+    		if (isATMOperationAllowed()) {
+    			this.withdraw(usrID, amount + StrictBankAccount.ATM_TRANSACTION_FEE);
+    		}
+    	} catch (Exception e) {
+    		System.out.println("Eccezione: " + e);
+    	}
     }
 
     /**
@@ -97,18 +114,38 @@ public class StrictBankAccount implements BankAccount {
      */
     public void computeManagementFees(final int usrID) {
         final double feeAmount = MANAGEMENT_FEE + (nTransactions * StrictBankAccount.TRANSACTION_FEE);
-        if (checkUser(usrID) && isWithdrawAllowed(feeAmount)) {
-            balance -= MANAGEMENT_FEE + nTransactions * StrictBankAccount.TRANSACTION_FEE;
-            nTransactions = 0;
-        }
+        try {
+        	if (checkUser(usrID) && isWithdrawAllowed(feeAmount)) {
+        		balance -= MANAGEMENT_FEE + nTransactions * StrictBankAccount.TRANSACTION_FEE;
+        		nTransactions = 0;
+        	}
+        } catch (Exception e) {
+    		System.out.println("Eccezione: " + e);
+    	}
     }
 
-    private boolean checkUser(final int id) {
-        return this.usrID == id;
+    private boolean checkUser(final int id) throws Exception {
+    	if (this.usrID == id) {
+    		return true;
+    	} else {
+    		throw new WrongAccountHolderException();
+    	}
     }
 
-    private boolean isWithdrawAllowed(final double amount) {
-        return balance > amount;
+    private boolean isWithdrawAllowed(final double amount) throws NotEnoughFoundsException {
+    	if (this.balance >= amount) {
+    		return true;
+    	} else {
+    		throw new NotEnoughFoundsException();
+    	}
+    }
+    
+    private boolean isATMOperationAllowed() throws TransactionsOverQuotaException {
+    	if (this.nTransactions < this.nMaxATMTransactions) {
+    		return true;
+    	} else {
+    		throw new TransactionsOverQuotaException();
+    	}
     }
 
     private void incTransactions() {
